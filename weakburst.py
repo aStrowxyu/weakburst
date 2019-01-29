@@ -154,14 +154,13 @@ class Worker(object):
         while not queue.empty():
             result_list.append(queue.get())
         if service == redis_burst:
-            redis_list = []
-            if result_list:
-                redis_password = result_list[0]['password']
-                redis_list.append(result_list[0])
-                for redis_result in result_list:
-                    if redis_result['password'] != redis_password:
-                        redis_list.append(redis_result)
-            result_list = redis_result
+            for result_use in result_list:
+                if result_use['password'] == '':
+                    result_list = [result_use]
+                    break
+        elif service == ftp_burst:
+            if result_list[0]['username'] == result_list[0]['password'] == 'anonymous':
+                result_list = [result_list[0]]
 
         return result_list
 
